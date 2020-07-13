@@ -45,13 +45,13 @@ public class AuthController {
                         authenticationToken.getName());
         log.info("Token value =>" + authorizedClient.getAccessToken().getTokenValue());
 
-        //3. Now you have full control on users data.You can eitehr see if user is not present in Database then store it and
+        //3. Now you have full control on users data.You can either see if user is not present in Database then store it and
         // send welcome email for the first time
         model.addAttribute("name", oAuth2User.getAttribute("name"));
         return "home";
     }
 
-    @GetMapping("/formLoginSuccess")
+    @GetMapping({"/", "/home"})
     public String retrieveFormLoginInfo(Model model,
                                         @AuthenticationPrincipal Authentication authentication){
         // In form-based login flow you get UserDetails as principal while in Oauth based flow you get Oauth2User
