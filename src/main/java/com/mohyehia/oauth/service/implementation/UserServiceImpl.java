@@ -1,7 +1,6 @@
 package com.mohyehia.oauth.service.implementation;
 
 import com.mohyehia.oauth.dao.UserDAO;
-import com.mohyehia.oauth.entity.AuthProvider;
 import com.mohyehia.oauth.entity.User;
 import com.mohyehia.oauth.service.framework.UserService;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User save(User user) {
-        user.setAuthProvider(AuthProvider.LOCAL);
         return userDAO.save(user);
     }
 }

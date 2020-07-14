@@ -1,5 +1,6 @@
 package com.mohyehia.oauth.config;
 
+import com.mohyehia.oauth.config.oauth.OAuth2UserService;
 import com.mohyehia.oauth.config.security.LocalSuccessHandler;
 import com.mohyehia.oauth.config.security.OAuthSuccessHandler;
 import com.mohyehia.oauth.service.implementation.LocalUserDetailsService;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -24,11 +26,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final LocalSuccessHandler localSuccessHandler;
     private final OAuthSuccessHandler oAuthSuccessHandler;
     private final LocalUserDetailsService localUserDetailsService;
+    private final OAuth2UserService oAuth2UserService;
 
-    public SecurityConfig(LocalSuccessHandler localSuccessHandler, OAuthSuccessHandler oAuthSuccessHandler, LocalUserDetailsService localUserDetailsService) {
+    public SecurityConfig(LocalSuccessHandler localSuccessHandler, OAuthSuccessHandler oAuthSuccessHandler, LocalUserDetailsService localUserDetailsService, OAuth2UserService oAuth2UserService) {
         this.localSuccessHandler = localSuccessHandler;
         this.oAuthSuccessHandler = oAuthSuccessHandler;
         this.localUserDetailsService = localUserDetailsService;
+        this.oAuth2UserService = oAuth2UserService;
     }
 
     @Override
@@ -47,8 +51,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(new AuthenticationEntryPoint("/login"))
                 .and()
                 .logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .invalidateHttpSession(true)
+                .logoutSuccessUrl("/login")
                 .and()
                 .oauth2Login()
+                .userInfoEndpoint()
+                .userService(oAuth2UserService)
+                .and()
                 .loginPage("/login").successHandler(oAuthSuccessHandler)
                 .and()
                 .csrf().disable();

@@ -1,67 +1,64 @@
 package com.mohyehia.oauth.controller;
 
 import com.mohyehia.oauth.entity.User;
+import com.mohyehia.oauth.entity.form.SignUpRequest;
+import com.mohyehia.oauth.service.framework.UserService;
+import com.mohyehia.oauth.utils.AppConstant;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @Log4j2
 public class AuthController {
-    private final OAuth2AuthorizedClientService clientService;
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthController(OAuth2AuthorizedClientService clientService) {
-        this.clientService = clientService;
+    public AuthController(UserService userService, PasswordEncoder passwordEncoder) {
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/login")
-    public String login(){
+    public String viewLoginPage(){
         return "login";
     }
 
-    @Secured("ROLE_USER")
-    @GetMapping("/oauth2LoginSuccess")
-    public String retrieveOauth2LoginInfo(Model model,
-                                          @AuthenticationPrincipal OAuth2AuthenticationToken authenticationToken){
-        // fetching the client details and user details
-        log.info(authenticationToken.getAuthorizedClientRegistrationId()); // client name like facebook, google etc.
-        log.info(authenticationToken.getName()); // facebook/google userId
-
-        // 1. Fetching User Info
-        OAuth2User oAuth2User = authenticationToken.getPrincipal(); // When you login with OAuth it gives you OAuth2User else UserDetails
-        log.info("UserID =>" + oAuth2User.getName()); // returns the userId of facebook something like 12312312313212
-        // getAttributes map Contains User details like name, email etc// print the whole map for more details
-        log.info("Email =>" + oAuth2User.getAttributes().get("email"));
-
-        //2. Just in case if you want to obtain User's auth token value, refresh token, expiry date etc you can use below snippet
-        OAuth2AuthorizedClient authorizedClient = clientService
-                .loadAuthorizedClient(authenticationToken.getAuthorizedClientRegistrationId(),
-                        authenticationToken.getName());
-        log.info("Token value =>" + authorizedClient.getAccessToken().getTokenValue());
-
-        //3. Now you have full control on users data.You can either see if user is not present in Database then store it and
-        // send welcome email for the first time
-        model.addAttribute("name", oAuth2User.getAttribute("name"));
-        return "home";
+    @GetMapping("/signup")
+    public String viewSignupPage(Model model){
+        model.addAttribute("signUpRequest", new SignUpRequest());
+        return "signup";
     }
 
-    @Secured("ROLE_USER")
-    @GetMapping({"/", "/home"})
-    public String retrieveFormLoginInfo(Model model,
-                                        @AuthenticationPrincipal Authentication authentication){
-        // In form-based login flow you get UserDetails as principal while in Oauth based flow you get Oauth2User
-        User user = (User) authentication.getPrincipal();
-        log.info("Username =>" + user.getUsername());
-
-        model.addAttribute("name", user.getName());
-        return "home";
+    @PostMapping("/signup")
+    public String saveNewUser(@ModelAttribute("signUpRequest") SignUpRequest signUpRequest,
+                              Model model,
+                              RedirectAttributes attributes) {
+        log.info("Submitted data =>" + signUpRequest);
+        if(userService.findByEmail(signUpRequest.getEmail()) != null){
+            model.addAttribute("signUpRequest", signUpRequest);
+            model.addAttribute("error", "Email Address already exists!");
+            return "signup";
+        }
+        // save user to database & redirect to login for now
+        User user = new User();
+        user.setName(signUpRequest.getName());
+        user.setEmail(signUpRequest.getEmail());
+        user.setAuthProvider(AppConstant.LOCAL_PROVIDER);
+        user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+        User savedUser = userService.save(user);
+        if(savedUser == null){
+            model.addAttribute("signUpRequest", signUpRequest);
+            model.addAttribute("error", "An error occurred while performing your request, please try again!");
+            return "signup";
+        }
+        log.info("new user saved successfully!");
+        attributes.addFlashAttribute("success", "Your account created successfully, you can now login with your credentials!");
+        return "redirect:/login";
     }
 }

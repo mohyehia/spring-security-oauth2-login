@@ -1,5 +1,6 @@
 package com.mohyehia.oauth.config.security;
 
+import com.mohyehia.oauth.entity.User;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -16,7 +17,7 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         log.info("OAuthSuccessHandler :: onAuthenticationSuccess :: start");
-        setDefaultTargetUrl("/oauth2LoginSuccess");
+        setDefaultTargetUrl("/home");
         setAlwaysUseDefaultTargetUrl(true);
         log.info("OAuthSuccessHandler :: onAuthenticationSuccess :: end");
         super.onAuthenticationSuccess(request, response, authentication);

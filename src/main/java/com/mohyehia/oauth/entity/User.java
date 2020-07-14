@@ -4,14 +4,16 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 @Data
 @Entity
-public class User implements UserDetails {
+public class User implements UserDetails, OAuth2User {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,8 +25,19 @@ public class User implements UserDetails {
     @Column
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    private AuthProvider authProvider;
+    @Column
+    private String authProvider;
+
+    @Column
+    private String providerId;
+
+    @Transient
+    private Map<String, Object> attributes;
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
