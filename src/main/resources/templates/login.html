@@ -12,7 +12,7 @@
     <style>
         .login-form {
             width: 400px;
-            margin: 40px auto;
+            margin: 60px auto;
             font-size: 15px;
         }
 
@@ -78,6 +78,19 @@
 <body>
     <div class="login-form">
         <form th:action="@{/login}" method="post" style="width: 100%">
+            <div class="alert alert-danger" role="alert" th:if="${param.error}">
+                <span>Invalid Credentials</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="alert alert-success" role="alert" th:if="${success}">
+                <span th:text="${success}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
             <h3 class="text-center">Sign in with</h3>
             <div class="row social-btn">
                 <div class="col-md-6">
@@ -115,9 +128,14 @@
             <div class="form-group">
                 <button type="submit" class="btn btn-dark btn-block login-btn">Login</button>
             </div>
-            <div class="clearfix">
-                <label class="pull-left checkbox-inline"><input type="checkbox"> Remember me</label>
-                <a href="#" class="pull-right text-success">Forgot Password?</a>
+            <hr>
+            <div class="row">
+                <div class="col-md-6 justify-content-start">
+                    <a href="#" class="text-danger">Forgot Password?</a>
+                </div>
+                <div class="col-md-6 text-right">
+                    <a th:href="@{/signup}" class="text-dark">Sign Up</a>
+                </div>
             </div>
         </form>
     </div>

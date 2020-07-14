@@ -1,9 +1,10 @@
 package com.mohyehia.oauth.controller;
 
+import com.mohyehia.oauth.entity.User;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -26,6 +27,7 @@ public class AuthController {
         return "login";
     }
 
+    @Secured("ROLE_USER")
     @GetMapping("/oauth2LoginSuccess")
     public String retrieveOauth2LoginInfo(Model model,
                                           @AuthenticationPrincipal OAuth2AuthenticationToken authenticationToken){
@@ -51,14 +53,15 @@ public class AuthController {
         return "home";
     }
 
+    @Secured("ROLE_USER")
     @GetMapping({"/", "/home"})
     public String retrieveFormLoginInfo(Model model,
                                         @AuthenticationPrincipal Authentication authentication){
         // In form-based login flow you get UserDetails as principal while in Oauth based flow you get Oauth2User
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        log.info("Username =>" + userDetails.getUsername());
+        User user = (User) authentication.getPrincipal();
+        log.info("Username =>" + user.getUsername());
 
-        model.addAttribute("name", userDetails.getUsername());
+        model.addAttribute("name", user.getName());
         return "home";
     }
 }
