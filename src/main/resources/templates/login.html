@@ -10,6 +10,9 @@
     <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/css/all.min.css}">
     <style>
+        body{
+            background: #f1f2f7;
+        }
         .login-form {
             width: 400px;
             margin: 60px auto;
@@ -18,25 +21,17 @@
 
         .login-form form {
             margin-bottom: 15px;
-            background: #f7f7f7;
             box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
             padding: 30px;
+            background-color: #ffffff;
         }
 
         .login-form h2 {
             margin: 0 0 15px;
         }
 
-        .login-form .hint-text {
-            color: #777;
-            padding-bottom: 15px;
-            text-align: center;
-            font-size: 13px;
-        }
-
         .form-control, .btn {
             min-height: 38px;
-            border-radius: 2px;
         }
 
         .login-btn {
@@ -50,7 +45,8 @@
             border-top: 1px solid #ccc;
         }
 
-        .or-seperator i {
+        .or-seperator span {
+            font-weight: 500;
             padding: 0 10px;
             background: #f7f7f7;
             position: relative;
@@ -63,15 +59,6 @@
             font-size: 15px;
             text-align: center;
             line-height: 24px;
-        }
-
-        .social-btn .btn i {
-            margin: 4px 15px 0 5px;
-            min-width: 15px;
-        }
-
-        .input-group-addon .fa {
-            font-size: 18px;
         }
     </style>
 </head>
@@ -92,15 +79,18 @@
                 </button>
             </div>
             <h3 class="text-center">Sign in with</h3>
-            <div class="row social-btn">
-                <div class="col-md-6">
-                    <a th:href="@{/oauth2/authorization/facebook}" class="btn btn-primary btn-block"><i class="fab fa-facebook-f"></i> <b>Facebook</b></a>
+            <div class="row social-btn text-center">
+                <div class="col-md-4">
+                    <a th:href="@{/oauth2/authorization/facebook}" class="btn btn-primary"><i class="fab fa-facebook-f fa-lg"></i></a>
                 </div>
-                <div class="col-md-6">
-                    <a th:href="@{/oauth2/authorization/google}" class="btn btn-danger btn-block"><i class="fab fa-google"></i> <b>Google</b></a>
+                <div class="col-md-4">
+                    <a th:href="@{/oauth2/authorization/google}" class="btn btn-danger"><i class="fab fa-google fa-lg"></i></a>
+                </div>
+                <div class="col-md-4">
+                    <a th:href="@{/oauth2/authorization/github}" class="btn btn-dark"><i class="fab fa-github fa-lg"></i></a>
                 </div>
             </div>
-            <div class="or-seperator"><i>OR</i></div>
+            <div class="or-seperator"><span>OR</span></div>
 
             <div class="form-group">
                 <label for="username">Username:</label>

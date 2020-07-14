@@ -11,7 +11,9 @@ public class OAuth2UserInfoFactory {
             return new GoogleOAuth2UserInfo(attributes);
         }else if(registrationId.equalsIgnoreCase(AppConstant.FACEBOOK_PROVIDER)){
             return new FacebookOAuth2UserInfo(attributes);
-        }else{
+        }else if(registrationId.equalsIgnoreCase(AppConstant.GITHUB_PROVIDER)){
+            return new GithubOAuth2UserInfo(attributes);
+        } else{
             throw new OAuth2AuthenticationProcessingException("Sorry! Login with " + registrationId + " is not supported yet.");
         }
     }
