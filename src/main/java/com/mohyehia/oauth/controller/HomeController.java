@@ -23,6 +23,7 @@ public class HomeController {
         log.info("user.getProviderId() =>" + user.getProviderId());
 
         model.addAttribute("name", user.getName());
+        model.addAttribute("profileImage", user.getProfileImage());
         return "home";
     }
 }

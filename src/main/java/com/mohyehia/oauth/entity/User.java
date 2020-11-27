@@ -24,6 +24,8 @@ public class User implements UserDetails, OAuth2User {
     private String name;
     @Column
     private String password;
+    @Column
+    private String profileImage;
 
     @Column
     private String authProvider;

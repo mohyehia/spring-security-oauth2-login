@@ -54,6 +54,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
     private User updateExistingUser(User user, OAuth2UserInfo oAuth2UserInfo) {
         user.setName(oAuth2UserInfo.getName());
+        user.setProfileImage(oAuth2UserInfo.getProfileImage());
         return userService.save(user);
     }
 
@@ -63,6 +64,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         user.setProviderId(oAuth2UserInfo.getId());
         user.setName(oAuth2UserInfo.getName());
         user.setEmail(oAuth2UserInfo.getEmail());
+        user.setProfileImage(oAuth2UserInfo.getProfileImage());
         return userService.save(user);
     }
 }
